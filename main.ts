@@ -2,6 +2,7 @@ namespace SpriteKind {
     export const Guess = SpriteKind.create()
     export const UI = SpriteKind.create()
 }
+// Formats the guess squares showing if they match.
 function attemptValidateSymbols () {
     for (let index = 0; index <= 5; index++) {
         if (answer.indexOf(guessesCurrent[index]) >= 0) {
@@ -18,6 +19,10 @@ function attemptValidateSymbols () {
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     numberBarCurrentIndex = numberBarGetItemIndex(-1)
     numberBarUpdate()
+})
+// temporary for testing
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    attemptValidateSymbols()
 })
 function setupAnswer () {
     answer = [
@@ -42,7 +47,7 @@ function selectorUpdatePosition () {
     grid.place(selector, tiles.getTileLocation(selectorColCurrent, guessesAttempt))
 }
 function attemptValidateMath () {
-    return false
+    return true
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (grid.spriteCol(selector) == grid.spriteCol(textEnter)) {
@@ -57,14 +62,23 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     }
 })
+function startNextAttempt () {
+    guessesAttempt += 1
+    grid.place(textEnter, tiles.getTileLocation(8, guessesAttempt))
+    grid.place(selector, tiles.getTileLocation(selectorColMin, guessesAttempt))
+    for (let index = 0; index <= 5; index++) {
+        tiles.setTileAt(tiles.getTileLocation(index + 2, guessesAttempt), assets.tile`squareblack`)
+    }
+    setupGuesses()
+}
 function setupGuesses () {
     guessesCurrent = [
     "2",
     "1",
-    "*",
+    "+",
     "7",
-    "7",
-    "+"
+    "-",
+    "3"
     ]
     for (let col = 0; col <= 5; col++) {
         guessSpriteTemp = textsprite.create(" ", 0, 15)
@@ -79,10 +93,19 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     selectorUpdatePosition()
 })
 function attemptSubmitted () {
-    if (attemptValidateMath()) {
-    	
-    } else {
+    if (!(attemptValidateMath())) {
         game.splash("Guess must equal  " + answerTarget)
+    } else {
+        attemptValidateSymbols()
+        if (attemptValidateAnswer()) {
+            game.splash("You win!")
+        } else {
+            if (guessesAttempt < 6) {
+                startNextAttempt()
+            } else {
+                game.splash("You didn't win. Try again.")
+            }
+        }
     }
 }
 function setupNumberBar () {
@@ -141,7 +164,7 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     selectorUpdatePosition()
 })
 function setupConfiguration () {
-    guessesAttempt = 2
+    guessesAttempt = 1
     selectorColMin = 2
     selectorColMax = 8
     selectorColCurrent = selectorColMin
@@ -158,6 +181,15 @@ function numberBarUpdate () {
     numberBarSpritePrev2.setText(numberBarItems[numberBarGetItemIndex(-2)])
     numberBarSpriteNext1.setText(numberBarItems[numberBarGetItemIndex(1)])
     numberBarSpriteNext2.setText(numberBarItems[numberBarGetItemIndex(2)])
+}
+// Check if the guess is exactly the same as the answer.
+function attemptValidateAnswer () {
+    for (let col = 0; col <= 5; col++) {
+        if (guessesCurrent[col] != answer[col]) {
+            return false
+        }
+    }
+    return true
 }
 function updateGuesses () {
     for (let sprite of sprites.allOfKind(SpriteKind.Text)) {
@@ -182,8 +214,8 @@ let numberBarSpritePrev2: TextSprite = null
 let numberBarSpritePrev1: TextSprite = null
 let numberBarSpriteCurrent: TextSprite = null
 let selectorColMax = 0
-let selectorColMin = 0
 let guessSpriteTemp: TextSprite = null
+let selectorColMin = 0
 let numberBarItems: string[] = []
 let selectorColCurrent = 0
 let textEnter: Sprite = null
