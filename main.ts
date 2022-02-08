@@ -60,6 +60,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                 createGuessSprite(grid.spriteCol(selector) - 2, numberBarItems[numberBarCurrentIndex])
             }
         }
+        grid.move(selector, 1, 0)
     }
 })
 function startNextAttempt () {
@@ -227,6 +228,7 @@ let guessesCurrent: string[] = []
 let answer: string[] = []
 setupConfiguration()
 scene.setBackgroundColor(1)
+tiles.setTilemap(tilemap`level1`)
 tiles.setTilemap(tilemap`level1`)
 setupAnswer()
 setupGuesses()
