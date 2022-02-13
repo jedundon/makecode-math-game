@@ -37,6 +37,9 @@ function setupAnswer () {
     "3"
     ]
     answerTarget = 27
+    targetAnswerUI = textsprite.create("Target: " + answerTarget, 0, 15)
+    targetAnswerUI.x = scene.screenWidth() / 2
+    targetAnswerUI.y = 8
 }
 function setupUI () {
     selector = sprites.create(assets.image`squareSelection`, SpriteKind.Player)
@@ -277,6 +280,7 @@ let selectorColMin = 0
 let selectorColCurrent = 0
 let textEnter: Sprite = null
 let selector: Sprite = null
+let targetAnswerUI: TextSprite = null
 let answerTarget = 0
 let guessesAttempt = 0
 let guessesCurrent: string[] = []
