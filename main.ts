@@ -15,6 +15,7 @@ function attemptValidateSymbols () {
             }
         } else {
             tiles.setTileAt(tiles.getTileLocation(index + 2, guessesAttempt), assets.tile`squaregrey`)
+            changeBackgroundColorForNewNumberBar(guessesCurrent[index], 11)
         }
     }
     updateNewNumberBar()
@@ -45,7 +46,8 @@ function setupUI () {
     textEnter = sprites.create(assets.image`textEnd`, SpriteKind.UI)
     grid.place(textEnter, tiles.getTileLocation(8, guessesAttempt))
 }
-function selectorUpdatePosition () {
+function selectorUpdatePosition (col: number) {
+    selectorColCurrent = Math.constrain(col, selectorColMin, selectorColMax)
     grid.place(selector, tiles.getTileLocation(selectorColCurrent, guessesAttempt))
 }
 function attemptValidateMath () {
@@ -62,13 +64,13 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                 createGuessSprite(grid.spriteCol(selector) - 2, numberBarItems[numberBarCurrentIndex])
             }
         }
-        grid.move(selector, 1, 0)
+        selectorUpdatePosition(selectorColCurrent + 1)
     }
 })
 function startNextAttempt () {
     guessesAttempt += 1
     grid.place(textEnter, tiles.getTileLocation(8, guessesAttempt))
-    grid.place(selector, tiles.getTileLocation(selectorColMin, guessesAttempt))
+    selectorUpdatePosition(selectorColMin)
     for (let index3 = 0; index3 <= 5; index3++) {
         tiles.setTileAt(tiles.getTileLocation(index3 + 2, guessesAttempt), assets.tile`squareblack`)
     }
@@ -76,11 +78,11 @@ function startNextAttempt () {
 }
 function setupGuesses () {
     guessesCurrent = [
-    "2",
-    "1",
-    "+",
-    "7",
+    "8",
+    "*",
+    "5",
     "-",
+    "1",
     "3"
     ]
     for (let col = 0; col <= 5; col++) {
@@ -92,8 +94,7 @@ function setupGuesses () {
     }
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    selectorColCurrent = Math.constrain(selectorColCurrent - 1, selectorColMin, selectorColMax)
-    selectorUpdatePosition()
+    selectorUpdatePosition(selectorColCurrent - 1)
 })
 function attemptSubmitted () {
     if (!(attemptValidateMath())) {
@@ -198,8 +199,7 @@ function changeBackgroundColorForNewNumberBar (value: string, color2: number) {
     numberBarSpriteBackground[numberBarItems.indexOf(value)] = color2
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    selectorColCurrent = Math.constrain(selectorColCurrent + 1, selectorColMin, selectorColMax)
-    selectorUpdatePosition()
+    selectorUpdatePosition(selectorColCurrent + 1)
 })
 function setupConfiguration () {
     guessesAttempt = 1
@@ -243,13 +243,7 @@ function attemptValidateAnswer () {
     return true
 }
 function updateGuesses () {
-    for (let sprite2 of sprites.allOfKind(SpriteKind.Text)) {
-        if (sprites.readDataNumber(sprite2, "attempt") == guessesAttempt) {
-            if (sprites.readDataNumber(sprite2, "position") == guessesAttempt) {
-            	
-            }
-        }
-    }
+	
 }
 function createGuessSprite (position: number, text: string) {
     guessSpriteTemp = textsprite.create(text, 0, 15)
@@ -275,11 +269,11 @@ let numberBarSpriteNext1: TextSprite = null
 let numberBarSpritePrev2: TextSprite = null
 let numberBarSpritePrev1: TextSprite = null
 let numberBarSpriteCurrent: TextSprite = null
-let selectorColMax = 0
 let guessSpriteTemp: TextSprite = null
-let selectorColMin = 0
 let numberBarCurrentIndex = 0
 let numberBarItems: string[] = []
+let selectorColMax = 0
+let selectorColMin = 0
 let selectorColCurrent = 0
 let textEnter: Sprite = null
 let selector: Sprite = null
@@ -295,4 +289,4 @@ setupAnswer()
 setupGuesses()
 setupNewNumberBar()
 setupUI()
-selectorUpdatePosition()
+selectorUpdatePosition(1)
