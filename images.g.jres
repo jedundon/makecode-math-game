@@ -9,6 +9,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "squareSelection"
     },
+    "image2": {
+        "data": "hwQMAAgAAACIiIiICAAAgAgAAIAIAACACAAAgAgAAIAIAACACAAAgAgAAIAIAACACAAAgIiIiIg=",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Number Bar Selector"
+    },
     "*": {
         "mimeType": "image/x-mkcd-f4",
         "dataEncoding": "base64",
