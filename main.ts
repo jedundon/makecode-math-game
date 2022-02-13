@@ -25,18 +25,13 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 // temporary for testing
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    attemptValidateSymbols()
+    game.splash(answer)
 })
 function setupAnswer () {
-    answer = [
-    "2",
-    "3",
-    "+",
-    "7",
-    "-",
-    "3"
-    ]
-    answerTarget = 27
+    generateAnswer()
+    while (!(validTargetAnswer())) {
+        generateAnswer()
+    }
     targetAnswerUI = textsprite.create("Target: " + answerTarget, 0, 15)
     targetAnswerUI.x = scene.screenWidth() / 2
     targetAnswerUI.y = 8
@@ -79,15 +74,41 @@ function startNextAttempt () {
     }
     setupGuesses()
 }
-function setupGuesses () {
-    guessesCurrent = [
-    "8",
+function validTargetAnswer () {
+    answerTargetMin = 0
+    answerTargetMax = 200
+    if (answerTarget < answerTargetMin || answerTarget > answerTargetMax) {
+        return false
+    } else if (answerTarget != Math.trunc(answerTarget)) {
+        return false
+    } else if (answer.indexOf("0") >= 0 && (answer.indexOf("0") == 0 || [
+    "/",
     "*",
-    "5",
     "-",
-    "1",
-    "3"
-    ]
+    "+"
+    ].indexOf(answer[answer.indexOf("0") - 1]) >= 0)) {
+        return false
+    } else {
+        return true
+    }
+}
+function setupGuesses () {
+    if (guessesAttempt > 1) {
+        for (let index = 0; index <= guessesCurrent.length - 1; index++) {
+            if (!(guessesCurrent[index] == answer[index])) {
+                guessesCurrent[index] = " "
+            }
+        }
+    } else {
+        guessesCurrent = [
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+        ]
+    }
     for (let col = 0; col <= 5; col++) {
         guessSpriteTemp = textsprite.create(" ", 0, 15)
         sprites.setDataNumber(guessSpriteTemp, "attempt", guessesAttempt)
@@ -95,6 +116,7 @@ function setupGuesses () {
         guessSpriteTemp.setText(guessesCurrent[col])
         grid.place(guessSpriteTemp, tiles.getTileLocation(col + 2, guessesAttempt))
     }
+    attemptValidateSymbols()
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     selectorUpdatePosition(selectorColCurrent - 1)
@@ -248,6 +270,59 @@ function attemptValidateAnswer () {
 function updateGuesses () {
 	
 }
+function random_index_from_array (array: any[]) {
+    return randint(0, array.length - 1)
+}
+function generateAnswer () {
+    answerPotentialDigits = [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+    ]
+    answerPotentialSymbols = [
+    "/",
+    "*",
+    "-",
+    "+"
+    ]
+    answer = [
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+    ]
+    diceRoll = randint(0, 4)
+    if (diceRoll == 0) {
+        answer[2] = answerPotentialSymbols.removeAt(random_index_from_array(answerPotentialSymbols))
+    } else if (diceRoll == 1) {
+        answer[3] = answerPotentialSymbols.removeAt(random_index_from_array(answerPotentialSymbols))
+    } else if (diceRoll == 2) {
+        answer[1] = answerPotentialSymbols.removeAt(random_index_from_array(answerPotentialSymbols))
+        answer[3] = answerPotentialSymbols.removeAt(random_index_from_array(answerPotentialSymbols))
+    } else if (diceRoll == 3) {
+        answer[1] = answerPotentialSymbols.removeAt(random_index_from_array(answerPotentialSymbols))
+        answer[4] = answerPotentialSymbols.removeAt(random_index_from_array(answerPotentialSymbols))
+    } else {
+        answer[2] = answerPotentialSymbols.removeAt(random_index_from_array(answerPotentialSymbols))
+        answer[4] = answerPotentialSymbols.removeAt(random_index_from_array(answerPotentialSymbols))
+    }
+    for (let index = 0; index <= answer.length - 1; index++) {
+        if (answer[index].isEmpty()) {
+            answer[index] = answerPotentialDigits.removeAt(random_index_from_array(answerPotentialDigits))
+        }
+    }
+    answerTarget = eval.evalArrayMath(answer)
+    console.logValue("generated target answer", answerTarget)
+}
 function createGuessSprite (position: number, text: string) {
     guessSpriteTemp = textsprite.create(text, 0, 15)
     sprites.setDataNumber(guessSpriteTemp, "attempt", guessesAttempt)
@@ -262,6 +337,9 @@ function setupNewNumberBarSelector () {
     numberBarSelector.z += 3
     updateNewNumberBarSelector(0)
 }
+let diceRoll = 0
+let answerPotentialSymbols: string[] = []
+let answerPotentialDigits: string[] = []
 let tempNumberBarSprite: TextSprite = null
 let numberBarSelector: Sprite = null
 let index_temp = 0
@@ -273,6 +351,8 @@ let numberBarSpritePrev2: TextSprite = null
 let numberBarSpritePrev1: TextSprite = null
 let numberBarSpriteCurrent: TextSprite = null
 let guessSpriteTemp: TextSprite = null
+let answerTargetMax = 0
+let answerTargetMin = 0
 let numberBarCurrentIndex = 0
 let numberBarItems: string[] = []
 let selectorColMax = 0
@@ -280,8 +360,8 @@ let selectorColMin = 0
 let selectorColCurrent = 0
 let textEnter: Sprite = null
 let selector: Sprite = null
-let targetAnswerUI: TextSprite = null
 let answerTarget = 0
+let targetAnswerUI: TextSprite = null
 let guessesAttempt = 0
 let guessesCurrent: string[] = []
 let answer: string[] = []
