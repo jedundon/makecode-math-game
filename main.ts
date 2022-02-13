@@ -2,7 +2,7 @@ namespace SpriteKind {
     export const Guess = SpriteKind.create()
     export const UI = SpriteKind.create()
 }
-// Formats the guess squares showing if they match.
+// Formats the guess squares showing if they match.ddd
 function attemptValidateSymbols () {
     for (let index = 0; index <= 5; index++) {
         if (answer.indexOf(guessesCurrent[index]) >= 0) {
@@ -47,7 +47,7 @@ function selectorUpdatePosition () {
     grid.place(selector, tiles.getTileLocation(selectorColCurrent, guessesAttempt))
 }
 function attemptValidateMath () {
-    return true
+    return eval.evalArrayMath(guessesCurrent) == answerTarget
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (grid.spriteCol(selector) == grid.spriteCol(textEnter)) {
@@ -160,10 +160,6 @@ function numberBarGetItemIndex (offset: number) {
         return index_temp
     }
 }
-controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    selectorColCurrent = Math.constrain(selectorColCurrent + 1, selectorColMin, selectorColMax)
-    selectorUpdatePosition()
-})
 function setupConfiguration () {
     guessesAttempt = 1
     selectorColMin = 2
@@ -172,6 +168,10 @@ function setupConfiguration () {
     color.setColor(11, color.rgb(140, 140, 140))
     color.setColor(12, color.rgb(210, 210, 210))
 }
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    selectorColCurrent = Math.constrain(selectorColCurrent + 1, selectorColMin, selectorColMax)
+    selectorUpdatePosition()
+})
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     numberBarCurrentIndex = numberBarGetItemIndex(1)
     numberBarUpdate()

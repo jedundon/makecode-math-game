@@ -6,7 +6,8 @@
         "Sprite Grid": "github:microsoft/arcade-grid#v1.3.0",
         "arcade-text": "github:microsoft/arcade-text#v1.3.0",
         "Color Fading": "github:jwunderl/pxt-color#v0.2.1",
-        "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.1.0"
+        "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.1.0",
+        "Test Math Evaluator": "github:jedundon/makecode-math-game-evaluation-functions#e00d4be70cd5b50975da167a4e0d2d572782df81"
     },
     "files": [
         "main.blocks",
@@ -22,7 +23,7 @@
         "test.ts"
     ],
     "targetVersions": {
-        "target": "1.7.24",
+        "target": "1.8.20",
         "targetId": "arcade"
     },
     "supportedTargets": [
